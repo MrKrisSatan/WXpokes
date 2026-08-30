@@ -1,140 +1,94 @@
 # Weather Variants
 
 Weather-form Pokémon for [Weather FX](https://github.com/MrKrisSatan/Weather-fx).
-Up to 1,103 persistent weather forms. A WX form can replace its base Pokémon
-only when that base Pokémon is a native encounter on the current map and the
-matching Weather FX weather is actually happening.
+Up to 1,103 persistent weather forms can register when their base species is
+available. A WX form can replace its base Pokémon only when that base Pokémon
+is a native encounter on the current map and matching Weather FX weather is
+active.
 
-This mod does not draw any weather itself and changes nothing about how
-Weather FX looks or behaves. It requires Weather FX to be installed, and does
-nothing on its own.
-
----
+Weather Variants does not draw weather itself. It requires Weather FX and can
+be installed or updated independently.
 
 ## Install
 
-Drop the `weather_variants` folder into your `mods/` folder, or import the
-`.modpkg` through the launcher, alongside Weather FX. Both mods can be
-installed and updated independently: uninstalling this one leaves Weather FX
-exactly as it was before this mod existed, and updating Weather FX does not
-require updating this mod (or vice versa) unless a changelog says otherwise.
+Import the release ZIP through gen1recomp's mod manager, or place the mod in
+your `mods/` folder alongside Weather FX. Then make sure **WX POKEMON** is `ON`
+in Weather Variants' settings.
 
-Then open this mod's own page in the mod manager and check **WX POKEMON** is
-`ON` (it is, by default).
+The manifest points gen1recomp's updater at `MrKrisSatan/WXpokes`, so newer
+release ZIPs can be offered through **Update / Versions**.
 
-### Updates
+## Evolution and artwork inheritance
 
-This package points gen1recomp's native updater at
-[`MrKrisSatan/WXpokes`](https://github.com/MrKrisSatan/WXpokes). When a newer
-installable ZIP is published in that repository's **Releases**, the launcher
-can detect it and offer it through **Update / Versions**. Release assets should
-prefer the standard `weather_variants-<version>.zip` name and contain the mod
-files at the ZIP root.
+WX Pokémon evolve by the **same method and requirement as their base form**.
+The mod copies the base evolution rule exactly and changes only the destination
+to the matching WX form when that weather-form lineage exists. Level, stone,
+trade, friendship and custom evolution-method metadata are left unchanged. If
+no matching WX evolved form exists, evolution falls back to the normal evolved
+species rather than becoming stuck.
 
----
+WX forms deliberately use the **base species artwork**. Battle sprites, summary
+and Pokédex sprites, evolution/trade/Hall of Fame art, and party-menu icons are
+resolved from the base species at draw time. Follower and overworld integrations
+also remap WX species to their base species. Compatible sprite packs therefore
+only need to replace the normal Pokémon art once and WX forms follow it.
 
 ## What you get
 
-**300 core weather variants**, one to three per base species across the
-original 151 plus a second full pass on 1–150, each with its own name,
-typing and a small chance to replace a normal wild encounter once its
-weather is live. Rain-form Bulbasaur ("Bloom"), Ashfall-form Charmander
-("Cinder"), Blizzard-form Gyarados, and so on. See
-[`docs/WEATHER_VARIANTS.md`](docs/WEATHER_VARIANTS.md) for the full table.
+- **300 core WX forms** for the original Kanto roster.
+- **Up to 470 extended forms for species #152-386**, registered whenever their
+  base species and required types exist.
+- **Up to 240 modern forms** for compatible expanded-dex installations.
+- **94 Primalweather Legendary/Mythical gifts**. A holiday visitor can appear
+  in the player's home on New Year's Day, Valentine's Day, St Patrick's Day,
+  Easter Sunday, Halloween, Christmas Eve, Christmas Day, Boxing Day and New
+  Year's Eve and give one level-5 registered Primalweather gift per holiday per
+  save per year. Full storage does not consume the claim.
+- **Persistent caught forms**. Turning WX POKEMON off stops new substitutions
+  without deleting Pokémon already caught.
 
-**Up to 470 extended forms for species #152-386.** These register whenever
-the base species exists in the merged game data. Native Gen 2 gets
-Chikorita-through-Celebi WX forms without requiring Kanto-Reforged, while
-Kanto-Reforged or another compatible dex can expose later rows through Deoxys.
+With `gen1recomp-national-dex`, WX forms register as forms of their base species
+rather than flooding the main Pokédex with synthetic species numbers.
 
-**Up to 240 modern forms**, two weather variants each for a curated
-120-species modern roster. They register opportunistically when a compatible
-expanded dex provides the base species and required types. See
-[`docs/GEN9_WEATHER_VARIANTS.md`](docs/GEN9_WEATHER_VARIANTS.md).
+## Wild encounter rules
 
-**94 Primalweather Legendary/Mythical gifts** are supported. Mew keeps its
-original `WX_300_MEW_PRIMALWEATHER` identity; 93 additional gift-only forms
-register when their base species exists. On New Year's Day, Valentine's Day,
-St Patrick's Day, Easter Sunday, Halloween, Christmas Eve/Day, Boxing Day and
-New Year's Eve, a holiday visitor appears in the player's home and offers one
-level-5 Primalweather gift. Each holiday can be claimed once per save per year;
-a full party/Boxes does not consume the claim.
+Current gen1recomp builds use the documented `encounter.species` seam after the
+normal encounter has been chosen, with an `encounter.roll` fallback for older
+engines and a dedicated fishing bridge. The base species must genuinely exist
+on the map's native encounter table before a WX substitution is allowed.
 
-**Clean Pokédex integration.** With
-[`gen1recomp-national-dex`](https://github.com/sanjinpepic/gen1recomp-national-dex)
-installed, every variant registers as a *form* of its base species (synthetic
-dex numbers 30000+, invisible on the main list) instead of a new numbered
-entry. Variants show up only when you open the base species and cycle forms,
-like megas or regional forms.
-
-**A caught variant is permanent.** Turning WX POKEMON off stops *new* wild
-substitutions; anything already caught, and its Pokédex/save record, stays
-exactly as it was.
-
----
+Current and legacy Weather FX weather IDs are recognised, including light and
+heavy rain, primal rain, thunderstorm, snow, sleet, harsh sun and strong winds.
 
 ## Settings
 
-One row, on this mod's own page in the mod manager:
-
-| Row | What it does |
+| Setting | Effect |
 | --- | --- |
-| **WX POKEMON** | ON/OFF. Changes take effect on the next wild encounter, no reload. |
+| **WX POKEMON** | Enables/disables new weather-form wild substitutions. |
 
-Rarity tuning lives in this mod's own `config.lua`, documented inline. It is
-separate from Weather FX's `config.lua`.
+Rarity tuning lives in this mod's own `config.lua`.
 
----
+## Version 1.2.1
 
-## How it talks to Weather FX
-
-Weather Variants depends on Weather FX and reads the live `WeatherState`,
-scene information, and base encounter tables through Weather FX's exported
-module namespace. Since Weather FX 4.31 no longer calls back into this mod,
-Weather Variants owns the final `encounter.species` rewrite on current
-gen1recomp builds, with an `encounter.roll` fallback for older builds. Weather
-FX rolls or biases the normal encounter first; Weather Variants then gets
-exactly one chance to substitute a matching WX form.
-
-The bridge checks the unmodified route table before substitution. If Weather
-FX injects an off-route Water, Ghost, Fire, etc. because of weather bias, that
-Pokémon stays its normal form. A WX form appears only on a map where its base
-species is genuinely present. Rod encounters use the same final substitution
-rule through `encounter.fishing`. Current and legacy Weather FX ids are both
-recognised, including `LIGHT_RAIN`/`RAIN_LIGHT`, `THUNDERSTORM`/`STORM`,
-`SUN`/`SUNNY`, and `PRIMAL_RAIN`/`HEAVY_RAIN`.
-
-The bridge is backwards-safe: if an older Weather FX build already returned a
-`WX_*` encounter, this mod detects it and does not substitute twice.
-
----
+- WX evolution rules now inherit the base form's method and requirements
+  exactly and only redirect the evolved species when a matching WX form exists.
+- Added live base-art resolution through gen1recomp's `pokemon.sprite` and
+  `pokemon.icon` hooks, covering battles, summaries, Pokédex, evolution,
+  trades, Hall of Fame and party menus.
+- Compatible visual-overhaul mods that replace base Pokémon art now carry
+  through automatically to WX forms.
+- Retains the v1.2.0 wild-spawn fix and holiday Primalweather gift system.
 
 ## Troubleshooting
 
-**No weather variants ever appear.** Check this mod's **WX POKEMON** row is
-`ON`, and Weather FX's **WEATHER** row is not `OFF`. No active weather means no
-variant can qualify.
+**No WX Pokémon appear:** make sure Weather Variants' **WX POKEMON** is `ON`
+and Weather FX's **WEATHER** is not `OFF`.
 
-**An extended variant never shows up.** Extended rows register only when the
-base species exists in the merged Pokémon registry and every required type is
-available. Native Gen 2 makes #152-251 eligible automatically; later species
-need a compatible expanded-dex/content mod.
+**A later-generation WX form is missing:** its base species and every required
+type must exist in the merged game data.
 
-**A caught variant lost its nickname or moves after an update.** That is a
-save-compatibility bug. Please report it with the variant species id
-(`WX_###_...`).
-
----
-
-## Version 1.2.0
-
-- Fixed WX weather variants not spawning in the wild with current Weather FX.
-- Uses the current `encounter.species` substitution seam with a legacy fallback.
-- Expanded weather-name compatibility across current and legacy Weather FX ids.
-- Added the holiday visitor to the player's home.
-- Added gift-only Primalweather Legendary and Mythical variants.
-- Holiday gifts are always level 5 and limited to one successful claim per holiday per save per year.
-- Full party/Boxes no longer consume a holiday claim.
+**A caught form loses data after an update:** report the `WX_###_...` species ID
+because that is a save-compatibility bug.
 
 ## Credits
 
