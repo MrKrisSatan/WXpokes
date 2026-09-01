@@ -1,95 +1,90 @@
-# Weather Variants
+# WX Pokes / Weather Variants
 
-Weather-form Pokémon for [Weather FX](https://github.com/MrKrisSatan/Weather-fx).
-Up to 1,103 persistent weather forms can register when their base species is
-available. A WX form can replace its base Pokémon only when that base Pokémon
-is a native encounter on the current map and matching Weather FX weather is
-active.
+WX Pokes adds persistent weather-adapted Pokémon forms to [Weather FX](https://github.com/MrKrisSatan/Weather-fx) for gen1recomp and gen2recomp.
 
-Weather Variants does not draw weather itself. It requires Weather FX and can
-be installed or updated independently.
+## Version 1.4.0
 
-## Install
+Version 1.4.0 expands WX Pokes into a complete weather-form matrix for the first 386 Pokémon.
 
-Import the release ZIP through gen1recomp's mod manager, or place the mod in
-your `mods/` folder alongside Weather FX. Then make sure **WX POKEMON** is `ON`
-in Weather Variants' settings.
+- **10,808 WX forms:** every Pokémon from Bulbasaur (#001) through Deoxys (#386) gets a form for each of Weather FX 4.35.32's 28 non-clear weather types.
+- **50% matching-weather wild conversion:** after the game rolls a normal wild Pokémon, it has a 50% chance to become its WX form when the matching weather is active.
+- **Distinct weather typing:** every WX form receives its own deterministic weather-derived type combination.
+- **Distinct weather learnset:** every WX form receives a weather-oriented learnset while keeping the base Pokémon's original level-up milestones.
+- **Original progression preserved:** growth rate, EXP progression, evolution level/method and other evolution requirements stay the same as the base species.
+- **Abilities on every WX Pokémon:** weather/theme abilities are assigned to every registered form.
+- **SPECIAL POWER:** underperforming special-oriented forms can receive this custom special counterpart to Huge/Pure Power. It doubles Special Attack, or Gen 1 Special for special damage, without boosting physical Attack.
+- **Base artwork inheritance:** WX forms use the base Pokémon's battle sprites, icons, cries and compatible follower/overworld art.
+- **Integrated type charts:** ZyranCZ's Steel/Dark/Fairy and historical/modern typing-chart controls are included directly in WX Pokes.
 
-The manifest points gen1recomp's updater at `MrKrisSatan/WXpokes`, so newer
-release ZIPs can be offered through **Update / Versions**.
+Examples include **Bloom Pikachu** in Verdant Rain and **Draconic Rattata** during Dragon Storm. The base species still has to be the Pokémon the game actually rolled for that encounter.
 
-## Evolution and artwork inheritance
+## Requirements
 
-WX Pokémon evolve by the **same method and requirement as their base form**.
-The mod copies the base evolution rule exactly and changes only the destination
-to the matching WX form when that weather-form lineage exists. Level, stone,
-trade, friendship and custom evolution-method metadata are left unchanged. If
-no matching WX evolved form exists, evolution falls back to the normal evolved
-species rather than becoming stuck.
+- A compatible current gen1recomp/gen2recomp build.
+- [Weather FX](https://github.com/MrKrisSatan/Weather-fx), which supplies the live weather state.
 
-WX forms deliberately use the **base species artwork**. Battle sprites, summary
-and Pokédex sprites, evolution/trade/Hall of Fame art, and party-menu icons are
-resolved from the base species at draw time. Follower and overworld integrations
-also remap WX species to their base species. Compatible sprite packs therefore
-only need to replace the normal Pokémon art once and WX forms follow it.
+Do not install the standalone `steel_typing` mod alongside WX Pokes 1.4.0 because its functionality is already integrated.
 
-## What you get
+## Installation
 
-- **300 core WX forms** for the original Kanto roster.
-- **Up to 470 extended forms for species #152-386**, registered whenever their
-  base species and required types exist.
-- **Up to 240 modern forms** for compatible expanded-dex installations.
-- **94 Primalweather Legendary/Mythical gifts**. A holiday visitor can appear
-  in the player's home on New Year's Day, Valentine's Day, St Patrick's Day,
-  Easter Sunday, Halloween, Christmas Eve, Christmas Day, Boxing Day and New
-  Year's Eve and give one level-5 registered Primalweather gift per holiday per
-  save per year. Full storage does not consume the claim.
-- **Persistent caught forms**. Turning WX POKEMON off stops new substitutions
-  without deleting Pokémon already caught.
+Import the release ZIP through the mod manager, or place the extracted mod in the game's `mods/` folder alongside Weather FX. Make sure **WX POKEMON** is enabled in WX Pokes and **WEATHER** is enabled in Weather FX.
 
-With `gen1recomp-national-dex`, WX forms register as forms of their base species
-rather than flooding the main Pokédex with synthetic species numbers.
+The manifest points the mod manager at `MrKrisSatan/WXpokes`, so future GitHub releases can appear through the normal **Update / Versions** flow.
 
 ## Wild encounter rules
 
-Current gen1recomp builds use the documented `encounter.species` seam after the
-normal encounter has been chosen, with an `encounter.roll` fallback for older
-engines and a dedicated fishing bridge. The base species must genuinely exist
-on the map's native encounter table before a WX substitution is allowed.
+WX Pokes does not increase or decrease the base game's encounter rate. It waits until the game has selected a normal wild Pokémon, reads the current Weather FX weather, and then checks for the matching WX form.
 
-Current and legacy Weather FX weather IDs are recognised, including light and
-heavy rain, primal rain, thunderstorm, snow, sleet, harsh sun and strong winds.
+If a matching form exists and is registered:
 
-## Settings
+1. The base Pokémon keeps its normal route/location eligibility.
+2. The original encounter level is preserved.
+3. WX Pokes rolls an exact **50%** conversion chance.
+4. Success replaces the species with the matching WX form; failure leaves the normal species unchanged.
 
-| Setting | Effect |
-| --- | --- |
-| **WX POKEMON** | Enables/disables new weather-form wild substitutions. |
+The bridge supports both the newer `encounter.species` path and the long-lived `encounter.roll` path, with a per-encounter guard preventing duplicate 50% rolls.
 
-Rarity tuning lives in this mod's own `config.lua`.
+## Typing, learnsets and evolution
 
-## Version 1.2.1
+Each WX form has a weather-derived type identity and weather-oriented moves. WX Pokes changes moves only at levels where the base species already learns a move, so it does not invent extra level-up milestones.
 
-- WX evolution rules now inherit the base form's method and requirements
-  exactly and only redirect the evolved species when a matching WX form exists.
-- Added live base-art resolution through gen1recomp's `pokemon.sprite` and
-  `pokemon.icon` hooks, covering battles, summaries, Pokédex, evolution,
-  trades, Hall of Fame and party menus.
-- Compatible visual-overhaul mods that replace base Pokémon art now carry
-  through automatically to WX forms.
-- Retains the v1.2.0 wild-spawn fix and holiday Primalweather gift system.
+Evolution remains tied to the original species. Level, stone, trade, friendship and supported custom evolution methods keep the same requirement. When the corresponding WX evolution exists, a WX Pokémon evolves into the matching weather form of its evolved species; otherwise it safely falls back to the normal evolved species.
+
+## Abilities
+
+Every registered WX Pokémon receives an ability. The selector prefers abilities appropriate to the form's weather and final typing, with a guaranteed non-empty fallback.
+
+**SPECIAL POWER** is a WX Pokes ability for genuinely weak special-oriented forms. It mirrors Huge/Pure Power on the special side:
+
+- doubles Gen 1 Special when calculating special damage;
+- doubles Gen 2 / split-system Special Attack;
+- never boosts physical Attack;
+- is only assigned when the form is special-oriented and the base special offense is weak or significantly behind Attack.
+
+## Artwork and save persistence
+
+WX forms deliberately inherit the base species' visual assets. Compatible sprite packs therefore only need to replace the normal Pokémon art once.
+
+Caught WX forms are persistent species. Turning **WX POKEMON** off prevents new wild substitutions but does not delete already-owned forms.
+
+With `gen1recomp-national-dex`, WX forms can register as forms of their base species rather than flooding the main Pokédex with synthetic entries.
+
+## Other features
+
+The holiday visitor and Primalweather Legendary/Mythical gift system remain included. Supported holidays can grant one level-5 registered Primalweather gift per holiday, per save, per year, without consuming the claim if storage is full.
 
 ## Troubleshooting
 
-**No WX Pokémon appear:** make sure Weather Variants' **WX POKEMON** is `ON`
-and Weather FX's **WEATHER** is not `OFF`.
+**No WX Pokémon appear:** confirm WX Pokes is enabled, Weather FX weather is enabled, and the active weather matches the form you are hunting. The base Pokémon must also normally be eligible for that encounter.
 
-**A later-generation WX form is missing:** its base species and every required
-type must exist in the merged game data.
+**A form is missing:** the base species and any required type support must exist in the merged game data. The integrated GEN VI typing preset supplies Steel, Dark and Fairy support where needed.
 
-**A caught form loses data after an update:** report the `WX_###_...` species ID
-because that is a save-compatibility bug.
+**A caught form breaks after an update:** report the exact `WX_...` species ID. Persistent WX IDs are treated as save-compatibility data.
 
 ## Credits
 
-Weather-form roster, typing and Pokédex text: **MrKrisSatan**.
+Weather-form system, roster design, typing direction and Pokédex text: **MrKrisSatan**.
+
+Integrated Steel/Dark/Fairy and type-chart system: **ZyranCZ**, from `Fairy-Steel-Dark-and-Typing-Charts` v2.0.1.
+
+Weather state and effects are provided by **Weather FX**.
