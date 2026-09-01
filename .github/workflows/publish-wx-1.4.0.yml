@@ -13,11 +13,20 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Rebuild and verify release ZIP
+      - name: Rebuild WX Pokes 1.4.0
+        env:
+          GH_TOKEN: ${{ github.token }}
         shell: bash
         run: |
-          cat .release-staging/weather_variants-1.4.0.zip.b64.part-* | base64 --decode > /tmp/weather_variants-1.4.0.zip
-          echo "73a7f193635f146c213858016f2cf719ef5cf216f74215d6f86d884cf6cd5f57  /tmp/weather_variants-1.4.0.zip" | sha256sum --check --strict
+          mkdir -p /tmp/wx-base /tmp/wx
+          gh release download 1.3.2 --pattern 'weather_variants-1.3.2.zip' --dir /tmp/wx-base
+          unzip -q /tmp/wx-base/weather_variants-1.3.2.zip -d /tmp/wx
+          cat .release-staging/wx140.patch.gz.b64.part-* | base64 --decode | gzip -dc > /tmp/wx140.patch
+          cd /tmp/wx
+          patch -p1 < /tmp/wx140.patch
+          find . -type f -exec touch -t 202609010000 {} +
+          find . -type f -printf '%P\n' | LC_ALL=C sort | zip -X -q /tmp/weather_variants-1.4.0.zip -@
+          echo "f9dfaabd7881cbc56408281de3161d28e9f8f330c243ecbcd5ca925a866ac90c  /tmp/weather_variants-1.4.0.zip" | sha256sum --check --strict
           unzip -t /tmp/weather_variants-1.4.0.zip
       - name: Publish latest release
         env:
