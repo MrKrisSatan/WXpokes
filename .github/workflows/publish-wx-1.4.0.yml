@@ -1,0 +1,58 @@
+name: Publish WX Pokes 1.4.0
+
+on:
+  push:
+    paths:
+      - '.release-staging/READY-1.4.0'
+
+permissions:
+  contents: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify release ZIP
+        shell: bash
+        run: |
+          echo "73a7f193635f146c213858016f2cf719ef5cf216f74215d6f86d884cf6cd5f57  .release-staging/weather_variants-1.4.0.zip" | sha256sum --check --strict
+          unzip -t .release-staging/weather_variants-1.4.0.zip
+      - name: Publish latest release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          ASSET=.release-staging/weather_variants-1.4.0.zip
+          if gh release view 1.4.0 >/dev/null 2>&1; then
+            gh release upload 1.4.0 "$ASSET" --clobber
+            gh release edit 1.4.0 --title "WX Pokes / Weather Variants 1.4.0" --notes-file - --latest <<'EOF'
+          WX Pokes 1.4.0 expands Weather Variants into a complete Weather FX matrix for Pokédex #001-386.
+
+          - 10,808 exhaustive WX forms: 386 Pokémon × 28 non-clear Weather FX weather types.
+          - Exact 50% matching-weather wild conversion after the normal encounter is rolled.
+          - Distinct weather-derived typing and weather-oriented learnsets for every form.
+          - Base growth rate, EXP progression, learn levels and evolution requirements are preserved.
+          - Every registered WX Pokémon has an ability.
+          - Adds SPECIAL POWER, the special counterpart to Huge/Pure Power, for qualifying underperforming special attackers.
+          - Includes integrated Steel/Dark/Fairy and type-chart controls.
+          - Base sprites, icons and cries remain inherited for broad visual-mod compatibility.
+
+          Examples include Bloom Pikachu in Verdant Rain and Draconic Rattata during Dragon Storm.
+          EOF
+          else
+            gh release create 1.4.0 "$ASSET" --title "WX Pokes / Weather Variants 1.4.0" --notes-file - --latest <<'EOF'
+          WX Pokes 1.4.0 expands Weather Variants into a complete Weather FX matrix for Pokédex #001-386.
+
+          - 10,808 exhaustive WX forms: 386 Pokémon × 28 non-clear Weather FX weather types.
+          - Exact 50% matching-weather wild conversion after the normal encounter is rolled.
+          - Distinct weather-derived typing and weather-oriented learnsets for every form.
+          - Base growth rate, EXP progression, learn levels and evolution requirements are preserved.
+          - Every registered WX Pokémon has an ability.
+          - Adds SPECIAL POWER, the special counterpart to Huge/Pure Power, for qualifying underperforming special attackers.
+          - Includes integrated Steel/Dark/Fairy and type-chart controls.
+          - Base sprites, icons and cries remain inherited for broad visual-mod compatibility.
+
+          Examples include Bloom Pikachu in Verdant Rain and Draconic Rattata during Dragon Storm.
+          EOF
+          fi
