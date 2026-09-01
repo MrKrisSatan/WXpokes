@@ -13,17 +13,18 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Verify release ZIP
+      - name: Rebuild and verify release ZIP
         shell: bash
         run: |
-          echo "73a7f193635f146c213858016f2cf719ef5cf216f74215d6f86d884cf6cd5f57  .release-staging/weather_variants-1.4.0.zip" | sha256sum --check --strict
-          unzip -t .release-staging/weather_variants-1.4.0.zip
+          cat .release-staging/weather_variants-1.4.0.zip.b64.part-* | base64 --decode > /tmp/weather_variants-1.4.0.zip
+          echo "73a7f193635f146c213858016f2cf719ef5cf216f74215d6f86d884cf6cd5f57  /tmp/weather_variants-1.4.0.zip" | sha256sum --check --strict
+          unzip -t /tmp/weather_variants-1.4.0.zip
       - name: Publish latest release
         env:
           GH_TOKEN: ${{ github.token }}
         shell: bash
         run: |
-          ASSET=.release-staging/weather_variants-1.4.0.zip
+          ASSET=/tmp/weather_variants-1.4.0.zip
           if gh release view 1.4.0 >/dev/null 2>&1; then
             gh release upload 1.4.0 "$ASSET" --clobber
             gh release edit 1.4.0 --title "WX Pokes / Weather Variants 1.4.0" --notes-file - --latest <<'EOF'
